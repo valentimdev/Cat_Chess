@@ -41,7 +41,6 @@ public class GamePanel extends JPanel implements Runnable {
         setPieces();
         copyPieces(pieces, simPieces);
     }
-
     public void launchGame(){
         gameThread = new Thread(this);
         gameThread.start();

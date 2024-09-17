@@ -17,9 +17,9 @@ public class Board {
             for(int col=0; col<MAX_COL; col++){
 
                 if((row + col) % 2 == 0){
-                    g2.setColor(new Color(204,183,174)); // cor dos quadrados claros
+                    g2.setColor(new Color(102,0,0)); // cor dos quadrados claros // rgb 141,145,141 cinza //144,180,147 verde // 114,131,112 verde escuro
                 } else {
-                    g2.setColor(new Color(112,102,119)); // cor dos quadrados escuros
+                    g2.setColor(new Color(0,68,116)); // cor dos quadrados escuros // 112,102,119 roxo
                 }
                 g2.fillRect(col * SQUARE_SIZE, row * SQUARE_SIZE, SQUARE_SIZE, SQUARE_SIZE);
             }

@@ -7,9 +7,9 @@ public class Queen extends Piece {
         super(color, col, row);
 
         if(color == GamePanel.WHITE){
-            image = getImage("/piece/w-queen");
+            image = getImage("/piece/w-queen2");
         }else{
-            image = getImage("/piece/b-queen");
+            image = getImage("/piece/b-queen5");
         }
     }
 }
