@@ -7,16 +7,16 @@ public class Bishop extends Piece {
         super(color, col, row);
 
         if(color == GamePanel.WHITE) {
-            image = getImage("/piece/w-bishop");
+            image = getImage("/piece/bispo_w");
         }else{
-            image = getImage("/piece/b-bishop");
+            image = getImage("/piece/bispo_b");
         }
     }
 
         public boolean canMove(int targetCol,int targetRow){
-            if(isWithinBoard(targetCol, targetRow) && isSameSquare(targetCol,targetRow) == false){
+            if(isWithinBoard(targetCol, targetRow) && !isSameSquare(targetCol,targetRow)){
                 if(Math.abs(targetCol - preCol) == Math.abs(targetRow - preRow)){
-                    if(isValidSquare(targetCol, targetRow) && pieceIsOnDiagonalLine(targetCol, targetRow) == false){
+                    if(isValidSquare(targetCol, targetRow) && !pieceIsOnDiagonalLine(targetCol, targetRow)){
                         return true;
                     }
                 }

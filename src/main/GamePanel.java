@@ -47,13 +47,13 @@ public class GamePanel extends JPanel implements Runnable {
     }
     public void setPieces(){
         //time de brancas
-//        pieces.add(new Pawn(WHITE,0,6));
-//        pieces.add(new Pawn(WHITE,1,6));
-//        pieces.add(new Pawn(WHITE,2,6));
-//        pieces.add(new Pawn(WHITE,3,6));
-//        pieces.add(new Pawn(WHITE,4,6));
-//        pieces.add(new Pawn(WHITE,5,6));
-//        pieces.add(new Pawn(WHITE,6,6));
+        pieces.add(new Pawn(WHITE,0,6));
+        pieces.add(new Pawn(WHITE,1,6));
+        pieces.add(new Pawn(WHITE,2,6));
+        pieces.add(new Pawn(WHITE,3,6));
+        pieces.add(new Pawn(WHITE,4,6));
+        pieces.add(new Pawn(WHITE,5,6));
+        pieces.add(new Pawn(WHITE,6,6));
         pieces.add(new Pawn(WHITE,7,6));
         pieces.add(new Rook(WHITE,0,7));
         pieces.add(new Rook(WHITE,7,7));
@@ -144,6 +144,8 @@ public class GamePanel extends JPanel implements Runnable {
                     //aplica as perdas das simpieces nas pieces
                     copyPieces(simPieces,pieces);//transfere as peças da simulaçao para as peças
                     activeP.updatePosition();
+
+                    changePlayer();
                 }
                 else{
                     //movimento nao valido, reseta a posicao
@@ -200,6 +202,17 @@ public class GamePanel extends JPanel implements Runnable {
             //esse codigo faz parte da "thinking phase" serve pra demonstrar onde a peça vai no tabuleiro
             activeP.draw(g2);
         }
+        //mensagem de turno
+        g2.setRenderingHint(Renderin);
     }
 
+    public void changePlayer(){
+        if(currentColor==WHITE){
+            currentColor = BLACK;
+        }
+        else{
+            currentColor = WHITE;
+        }
+        activeP = null;
+    }
 }

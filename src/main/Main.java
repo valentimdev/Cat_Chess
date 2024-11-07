@@ -4,7 +4,7 @@ import javax.swing.*;
 
 public class Main {
     public static void main(String[] args) {
-        JFrame window = new JFrame("Chess");
+        JFrame window = new JFrame("Cat Chess");
         window.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         window.setResizable(false);
         //Adicionar o game panel na janela
