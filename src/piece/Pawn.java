@@ -30,8 +30,8 @@ public class Pawn extends Piece {
             }
             // movimento de 2 quadrados do peao(movimento inicial)
             if (targetCol == preCol && targetRow == preRow + moveValue * 2 // && hittingP == null
-                    && !pieceIsOnStraightLine(preCol, preRow + moveValue)){  // verifica se a casa intermediária está livre
-                  // &&  moved==false) {  // verifica se ja se moveu
+                    && !pieceIsOnStraightLine(preCol, preRow + moveValue)  // verifica se a casa intermediária está livre
+                  &&  !moved) {  // verifica se ja se moveu
                 return true;
             }
             //captura na diagonal

@@ -22,13 +22,13 @@ public class King extends Piece {
                 }
             }
             //roque
-            if(moved){
+            if(!moved){
                 //roque direita
-                if(targetCol == preCol + 2 && preCol == preRow &&
-                        !pieceIsOnDiagonalLine(targetCol, targetRow)
+                if(targetCol == preCol + 2 && targetRow == preRow &&
+                        !pieceIsOnStraightLine(targetCol, targetRow)
                 ){
                     for(Piece piece: GamePanel.simPieces){
-                        if(piece.col == preCol+3 && piece.row == preRow && piece.moved){
+                        if(piece.col == preCol+3 && piece.row == preRow && !piece.moved){
                             GamePanel.castlingP = piece;
                             return true;
                         }
@@ -45,7 +45,8 @@ public class King extends Piece {
                         if(piece.col == preCol-4 && piece.row == targetRow){
                             p[1] = piece;
                         }
-                        if(p[0] == null && p[1].hasMoved){
+                        System.out.println(p[1]);
+                        if(p[0] == null && p[1]!=null && !p[1].moved){
                             GamePanel.castlingP = p[1];
                             return true;
                         }

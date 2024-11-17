@@ -58,11 +58,11 @@ public class GamePanel extends JPanel implements Runnable {
         pieces.add(new Pawn(WHITE,7,6));
         pieces.add(new Rook(WHITE,0,7));
         pieces.add(new Rook(WHITE,7,7));
-        pieces.add(new Knight(WHITE,1,7));
-        pieces.add(new Knight(WHITE,6,7));
-        pieces.add(new Bishop(WHITE,2,7));
-        pieces.add(new Bishop(WHITE,5,7));
-        pieces.add(new Queen(WHITE,3,7));
+//        pieces.add(new Knight(WHITE,1,7));
+//        pieces.add(new Knight(WHITE,6,7));
+//        pieces.add(new Bishop(WHITE,2,7));
+//        pieces.add(new Bishop(WHITE,5,7));
+//        pieces.add(new Queen(WHITE,3,7));
         pieces.add(new King(WHITE,4,7));
         //time de pretas
         pieces.add(new Pawn(BLACK,0,1));
@@ -144,8 +144,11 @@ public class GamePanel extends JPanel implements Runnable {
                     //atualiza a lista de peças em caso de captura e remoçao durante a simulaçao
                     //aplica as perdas das simpieces nas pieces
                     copyPieces(simPieces,pieces);//transfere as peças da simulaçao para as peças
-                    activeP.moved = true;
                     activeP.updatePosition();
+                    activeP.moved = true;
+                    if(castlingP != null){
+                        castlingP.updatePosition();
+                    }
                     changePlayer();
                 }
                 else{
@@ -164,6 +167,13 @@ public class GamePanel extends JPanel implements Runnable {
         //isso é para restaurar peças removidas durante a simulaçao
         copyPieces(pieces, simPieces);
 
+        //reseta o status da peça do roque
+        if(castlingP!=null){
+            castlingP.col = castlingP.preCol;
+            castlingP.x = castlingP.getX(castlingP.col);
+            castlingP = null;
+        }
+
 
         //SE UMA PEÇA ESTA SENDO SEGURADA ATUALIZA SUA POSIÇAO
         activeP.x = mouse.x - Board.SQUARE_SIZE/2;
@@ -179,10 +189,9 @@ public class GamePanel extends JPanel implements Runnable {
                 simPieces.remove(activeP.hittingP.getIndex());
 
             }
+            checkCastling();
             validSquare = true;
         }
-
-        activeP.moved = true;
     }
 
 
@@ -208,6 +217,17 @@ public class GamePanel extends JPanel implements Runnable {
             activeP.draw(g2);
         }
         //mensagem de turno
+    }
+    public void checkCastling(){
+        if(castlingP != null){
+            if(castlingP.col == 0){
+                castlingP.col += 3;
+            }
+            else if(castlingP.col == 7){
+                castlingP.col -= 2;
+            }
+            castlingP.x = castlingP.getX(castlingP.col);
+        }
     }
 
     public void changePlayer(){
