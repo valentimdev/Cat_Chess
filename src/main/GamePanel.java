@@ -143,8 +143,8 @@ public class GamePanel extends JPanel implements Runnable {
                     //atualiza a lista de peças em caso de captura e remoçao durante a simulaçao
                     //aplica as perdas das simpieces nas pieces
                     copyPieces(simPieces,pieces);//transfere as peças da simulaçao para as peças
+                    activeP.moved = true;
                     activeP.updatePosition();
-
                     changePlayer();
                 }
                 else{
@@ -167,8 +167,9 @@ public class GamePanel extends JPanel implements Runnable {
         //SE UMA PEÇA ESTA SENDO SEGURADA ATUALIZA SUA POSIÇAO
         activeP.x = mouse.x - Board.SQUARE_SIZE/2;
         activeP.y = mouse.y - Board.SQUARE_SIZE/2;
-        activeP.col = (activeP.x + Board.SQUARE_SIZE / 2) / Board.SQUARE_SIZE;
-        activeP.row = (activeP.y + Board.SQUARE_SIZE / 2) / Board.SQUARE_SIZE;
+        activeP.col=activeP.getCol(activeP.x);
+        activeP.row=activeP.getRow(activeP.y);
+
         //CHECA SE A PEÇA ESTA EM CIMA DE UM QUADRADO ALCANÇAVEL
         if(activeP.canMove(activeP.col,activeP.row)){
             canMove = true;
@@ -180,7 +181,10 @@ public class GamePanel extends JPanel implements Runnable {
             validSquare = true;
         }
 
+        activeP.moved = true;
     }
+
+
     public void paintComponent(Graphics g){
         super.paintComponent(g);
 
@@ -203,7 +207,6 @@ public class GamePanel extends JPanel implements Runnable {
             activeP.draw(g2);
         }
         //mensagem de turno
-        g2.setRenderingHint(Renderin);
     }
 
     public void changePlayer(){

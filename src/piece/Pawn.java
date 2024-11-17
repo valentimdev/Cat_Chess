@@ -13,7 +13,6 @@ public class Pawn extends Piece {
             image = getImage("/piece/peao_b");
         }
     }
-
     public boolean canMove(int targetCol, int targetRow) {
         if(isWithinBoard(targetCol, targetRow) && !isSameSquare(targetCol, targetRow)) {
             //define o valor de movimento baseado na sua cor
@@ -30,9 +29,9 @@ public class Pawn extends Piece {
                 return true;
             }
             // movimento de 2 quadrados do peao(movimento inicial)
-            if (targetCol == preCol && targetRow == preRow + moveValue * 2 && hittingP == null
-                    && !pieceIsOnStraightLine(preCol, preRow + moveValue)  // verifica se a casa intermediária está livre
-                    && ((preRow == 1 && moveValue == 1) || (preRow == 6 && moveValue == -1))) {  // verifica se está na posição inicial
+            if (targetCol == preCol && targetRow == preRow + moveValue * 2 // && hittingP == null
+                    && !pieceIsOnStraightLine(preCol, preRow + moveValue)){  // verifica se a casa intermediária está livre
+                  // &&  moved==false) {  // verifica se ja se moveu
                 return true;
             }
             //captura na diagonal
