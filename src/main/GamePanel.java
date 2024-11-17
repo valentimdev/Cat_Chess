@@ -20,6 +20,7 @@ public class GamePanel extends JPanel implements Runnable {
     public static ArrayList<Piece> pieces= new ArrayList<>();
     public static ArrayList<Piece> simPieces = new ArrayList<>();
     Piece activeP;
+    public static Piece castlingP;
 
     //COR DA PEÇA
     public static final int WHITE = 0;
