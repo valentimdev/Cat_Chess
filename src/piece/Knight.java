@@ -1,11 +1,13 @@
 package piece;
 
 import main.GamePanel;
+import main.Type;
 
 public class Knight extends Piece {
     public Knight(int color, int col, int row) {
         super(color, col, row);
 
+        type = Type.KNIGHT;
         if(color == GamePanel.WHITE){
             image = getImage("/piece/cavalo_w");
         }else{
