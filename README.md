@@ -23,8 +23,9 @@ Bishop
 ![bispo_w](https://github.com/user-attachments/assets/2aad4c52-3c31-4d53-919d-0e0c288e1bd1)![bispo_b](https://github.com/user-attachments/assets/e829f62d-53fe-41b3-bd44-89904150b55d)
 
 
+How to play:
 
-
+Currently, Cat Chess is under development and does not have a ready-to-use executable. However, you can run the project directly from the source code if you have Java installed. 
 
 
 
