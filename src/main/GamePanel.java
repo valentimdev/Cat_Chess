@@ -20,6 +20,7 @@ public class GamePanel extends JPanel implements Runnable {
     public static ArrayList<Piece> pieces= new ArrayList<>();
     public static ArrayList<Piece> simPieces = new ArrayList<>();
     Piece activeP;
+    ArrayList<Piece> promoPieces = new ArrayList<>();
     public static Piece castlingP;
 
     //COR DA PEÇA
@@ -30,6 +31,7 @@ public class GamePanel extends JPanel implements Runnable {
     //BOOLEANS
     boolean canMove;
     boolean validSquare;
+    boolean promotion;
 
 
     public GamePanel() {
@@ -58,11 +60,11 @@ public class GamePanel extends JPanel implements Runnable {
         pieces.add(new Pawn(WHITE,7,6));
         pieces.add(new Rook(WHITE,0,7));
         pieces.add(new Rook(WHITE,7,7));
-//        pieces.add(new Knight(WHITE,1,7));
-//        pieces.add(new Knight(WHITE,6,7));
-//        pieces.add(new Bishop(WHITE,2,7));
-//        pieces.add(new Bishop(WHITE,5,7));
-//        pieces.add(new Queen(WHITE,3,7));
+        pieces.add(new Knight(WHITE,1,7));
+        pieces.add(new Knight(WHITE,6,7));
+        pieces.add(new Bishop(WHITE,2,7));
+        pieces.add(new Bishop(WHITE,5,7));
+        pieces.add(new Queen(WHITE,3,7));
         pieces.add(new King(WHITE,4,7));
         //time de pretas
         pieces.add(new Pawn(BLACK,0,1));
@@ -116,49 +118,57 @@ public class GamePanel extends JPanel implements Runnable {
     }
 
     private void update(){
-        //BOTAO DO MOUSE PRESSIONADO
-        if(mouse.pressed){
-            if(activeP == null){
-                //SE A VARIAVEL activeP ESTA EM NULL CHECA SE VOCE PODE MEXER UMA PEÇA
-                for(Piece piece: simPieces){
-                    //SE O MOUSE ESTA NUMA PEÇA ALIADA SEGURA COMO A activeP(PEÇA ATIVA)
+        if (promotion) {
+            promoting();
+        } else {
+            //BOTAO DO MOUSE PRESSIONADO
+            if (mouse.pressed) {
+                if (activeP == null) {
+                    //SE A VARIAVEL activeP ESTA EM NULL CHECA SE VOCE PODE MEXER UMA PEÇA
+                    for (Piece piece : simPieces) {
+                        //SE O MOUSE ESTA NUMA PEÇA ALIADA SEGURA COMO A activeP(PEÇA ATIVA)
 
-                    if(piece.color == currentColor
-                            && piece.col == mouse.x/Board.SQUARE_SIZE
-                            && piece.row == mouse.y/Board.SQUARE_SIZE){
+                        if (piece.color == currentColor
+                                && piece.col == mouse.x / Board.SQUARE_SIZE
+                                && piece.row == mouse.y / Board.SQUARE_SIZE) {
 
-                        activeP = piece;
+                            activeP = piece;
+                        }
+                    }
+                } else {
+                    //SE O JOGADOR ESTA SEGURANDO UMA PEÇA, SIMULA O MOVIMENTO
+                    simulate();
+                }
+            }
+            //BOTAO DO MOUSE FOI SOLTO
+            if (mouse.pressed == false) {
+                if (activeP != null) {
+                    if (validSquare) {
+                        //movimento confirmado
+                        //atualiza a lista de peças em caso de captura e remoçao durante a simulaçao
+                        //aplica as perdas das simpieces nas pieces
+                        copyPieces(simPieces, pieces);//transfere as peças da simulaçao para as peças
+                        activeP.updatePosition();
+                        activeP.moved = true;
+                        if (castlingP != null) {
+                            castlingP.updatePosition();
+                        }
+
+                        if (canPromote()) {
+                            promotion = true;
+                        } else {
+                            changePlayer();
+                        }
+                    } else {
+                        //movimento nao valido, reseta a posicao
+                        copyPieces(pieces, simPieces);//coloca as peças reais na lista de peças simuladas
+                        activeP.resetPosition();
+                        activeP = null;
                     }
                 }
             }
-            else{
-                //SE O JOGADOR ESTA SEGURANDO UMA PEÇA, SIMULA O MOVIMENTO
-                simulate();
-            }
         }
-        //BOTAO DO MOUSE FOI SOLTO
-        if(mouse.pressed == false){
-            if(activeP != null){
-                if(validSquare){
-                    //movimento confirmado
-                    //atualiza a lista de peças em caso de captura e remoçao durante a simulaçao
-                    //aplica as perdas das simpieces nas pieces
-                    copyPieces(simPieces,pieces);//transfere as peças da simulaçao para as peças
-                    activeP.updatePosition();
-                    activeP.moved = true;
-                    if(castlingP != null){
-                        castlingP.updatePosition();
-                    }
-                    changePlayer();
-                }
-                else{
-                    //movimento nao valido, reseta a posicao
-                    copyPieces(pieces, simPieces);//coloca as peças reais na lista de peças simuladas
-                    activeP.resetPosition();
-                    activeP=null;
-                }
-            }
-        }
+
     }
     private void simulate(){
         canMove = false;
@@ -194,6 +204,39 @@ public class GamePanel extends JPanel implements Runnable {
         }
     }
 
+    private boolean canPromote(){
+        if(activeP.type == Type.PAWN){
+            if(currentColor == WHITE && activeP.row == 0 || currentColor == BLACK && activeP.row ==7){
+                promoPieces.clear();
+                promoPieces.add(new Rook(currentColor,9,2));
+                promoPieces.add(new Knight(currentColor,9,3));
+                promoPieces.add(new Bishop(currentColor,9,4));
+                promoPieces.add(new Queen(currentColor,9,5));
+                return true;
+            }
+        }return false;
+    }
+    private void promoting(){
+        if(mouse.pressed){
+            for(Piece piece : promoPieces){
+                if(piece.col == mouse.x/Board.SQUARE_SIZE && piece.row == mouse.y / Board.SQUARE_SIZE){
+                    switch(piece.type){
+                        case ROOK:simPieces.add(new Rook(currentColor,activeP.col,activeP.row));break;
+                        case KNIGHT:simPieces.add(new Knight(currentColor,activeP.col,activeP.row));break;
+                        case BISHOP:simPieces.add(new Bishop(currentColor,activeP.col,activeP.row));break;
+                        case QUEEN:simPieces.add(new Queen(currentColor,activeP.col,activeP.row));break;
+                        default:break;
+                    }
+                    simPieces.remove(activeP.getIndex());
+                    copyPieces(simPieces, pieces);
+                    activeP=null;
+                    promotion=false;
+                    changePlayer();
+                }
+            }
+        }
+
+    }
 
     public void paintComponent(Graphics g){
         super.paintComponent(g);
@@ -216,8 +259,12 @@ public class GamePanel extends JPanel implements Runnable {
             //esse codigo faz parte da "thinking phase" serve pra demonstrar onde a peça vai no tabuleiro
             activeP.draw(g2);
         }
-        //mensagem de turno
-    }
+        if(promotion){
+            for(Piece piece: promoPieces){
+                g2.drawImage(piece.image,piece.getX(piece.col),piece.getY(piece.row),Board.SQUARE_SIZE,Board.SQUARE_SIZE,null);
+            }
+        }}
+
     public void checkCastling(){
         if(castlingP != null){
             if(castlingP.col == 0){
