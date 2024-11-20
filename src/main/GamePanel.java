@@ -200,7 +200,8 @@ public class GamePanel extends JPanel implements Runnable {
 
             }
             checkCastling();
-            validSquare = true;
+            if(!isIllegal(activeP)){//checa se o rei pode ir para aquele quadrado
+            validSquare = true;}
         }
     }
 
@@ -249,11 +250,18 @@ public class GamePanel extends JPanel implements Runnable {
             p.draw(g2);
         }
         if (activeP != null){
-            if (canMove){//apenas fica colorido quandoi o movimento é possivel
-                g2.setColor(Color.GRAY);
+            if (canMove){//fica cinza quando o movimento é possivel e vermelho quando nao é
+                if(isIllegal(activeP)){
+                g2.setColor(Color.RED);
                 g2.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 0.7f));
                 g2.fillRect(activeP.col*Board.SQUARE_SIZE,activeP.row*Board.SQUARE_SIZE , Board.SQUARE_SIZE, Board.SQUARE_SIZE);
                 g2.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 1f));
+            }else{
+                    g2.setColor(Color.GRAY);
+                    g2.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 0.7f));
+                    g2.fillRect(activeP.col*Board.SQUARE_SIZE,activeP.row*Board.SQUARE_SIZE , Board.SQUARE_SIZE, Board.SQUARE_SIZE);
+                    g2.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 1f));
+                }
             }
 
             //esse codigo faz parte da "thinking phase" serve pra demonstrar onde a peça vai no tabuleiro
@@ -264,6 +272,15 @@ public class GamePanel extends JPanel implements Runnable {
                 g2.drawImage(piece.image,piece.getX(piece.col),piece.getY(piece.row),Board.SQUARE_SIZE,Board.SQUARE_SIZE,null);
             }
         }}
+    private boolean isIllegal(Piece king){
+        if(king.type==Type.KING){
+            for(Piece piece: simPieces){
+                if(piece != king && piece.color != king.color && piece.canMove(king.col,king.row)){
+                    return true;
+                }
+            }
+        }return false;
+    }
 
     public void checkCastling(){
         if(castlingP != null){
