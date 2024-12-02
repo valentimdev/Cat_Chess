@@ -297,12 +297,12 @@ public class GamePanel extends JPanel implements Runnable {
             }
             g2.setFont(new Font("Consola",Font.PLAIN,90));
             g2.setColor(Color.WHITE);
-            g2.drawString(s,200,420);
+            g2.drawString(s,100,210);
         }
         if(stalemate){
             g2.setFont(new Font("Consola",Font.PLAIN,90));
             g2.setColor(Color.WHITE);
-            g2.drawString("DRAWg",200,420);
+            g2.drawString("DRAW",100,210);
         }
     }
     private boolean isIllegal(Piece king){
