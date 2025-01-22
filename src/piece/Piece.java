@@ -27,7 +27,7 @@ public class Piece {
         y=getY(color);
         preCol = col;
         preRow = row;
-        this.image=getImage("/piece/w-king");
+        this.image=getImage("/piece/rei_w");
         updatePosition();
     }
     public BufferedImage getImage(String imagePatch){
@@ -77,8 +77,7 @@ public class Piece {
         y = getY(row);
         preCol = getCol(x);
         preRow = getRow(y);
-//        moved = true;
-        System.out.println("teste");
+//        moved = true
     }
     public void resetPosition(){
         col=preCol;
