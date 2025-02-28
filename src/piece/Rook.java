@@ -10,7 +10,7 @@ public class Rook extends Piece {
         if(color == GamePanel.WHITE){
             image = getImage("/piece/torre_w");
         }else{
-            image = getImage("/piece/torre_b");
+            image = getImage("/piece/torre_B");
         }
     }
     public boolean canMove(int targetCol, int targetRow) {
