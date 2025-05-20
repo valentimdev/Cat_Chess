@@ -53,21 +53,21 @@ public class GamePanel extends JPanel implements Runnable {
     }
     public void setPieces(){
         //time de brancas
-//        pieces.add(new Pawn(WHITE,0,6));
-//        pieces.add(new Pawn(WHITE,1,6));
-//        pieces.add(new Pawn(WHITE,2,6));
-//        pieces.add(new Pawn(WHITE,3,6));
-//        pieces.add(new Pawn(WHITE,4,6));
-//        pieces.add(new Pawn(WHITE,5,6));
-//        pieces.add(new Pawn(WHITE,6,6));
-//        pieces.add(new Pawn(WHITE,7,6));
-//        pieces.add(new Rook(WHITE,0,7));
-//        pieces.add(new Rook(WHITE,7,7));
-//        pieces.add(new Knight(WHITE,1,7));
-//        pieces.add(new Knight(WHITE,6,7));
-//        pieces.add(new Bishop(WHITE,2,7));
-//        pieces.add(new Bishop(WHITE,5,7));
-//        pieces.add(new Queen(WHITE,3,7));
+        pieces.add(new Pawn(WHITE,0,6));
+        pieces.add(new Pawn(WHITE,1,6));
+        pieces.add(new Pawn(WHITE,2,6));
+        pieces.add(new Pawn(WHITE,3,6));
+        pieces.add(new Pawn(WHITE,4,6));
+        pieces.add(new Pawn(WHITE,5,6));
+        pieces.add(new Pawn(WHITE,6,6));
+        pieces.add(new Pawn(WHITE,7,6));
+        pieces.add(new Rook(WHITE,0,7));
+        pieces.add(new Rook(WHITE,7,7));
+        pieces.add(new Knight(WHITE,1,7));
+        pieces.add(new Knight(WHITE,6,7));
+        pieces.add(new Bishop(WHITE,2,7));
+        pieces.add(new Bishop(WHITE,5,7));
+        pieces.add(new Queen(WHITE,3,7));
         pieces.add(new King(WHITE,4,7));
         //time de pretas
         pieces.add(new Pawn(BLACK,0,1));
