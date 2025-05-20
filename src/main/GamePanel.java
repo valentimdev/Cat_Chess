@@ -10,12 +10,12 @@ public class GamePanel extends JPanel implements Runnable {
 
 
     public static final int WIDTH = 800;
-    public static final int HEIGHT = 600;
+    public static final int HEIGHT = 800;
     final int FPS = 60;
     Thread gameThread;
     Board board = new Board();
     Mouse mouse = new Mouse();
-
+    Rectangle replayButton = null;
    //PEÇAS
     public static ArrayList<Piece> pieces= new ArrayList<>();
     public static ArrayList<Piece> simPieces = new ArrayList<>();
@@ -53,21 +53,21 @@ public class GamePanel extends JPanel implements Runnable {
     }
     public void setPieces(){
         //time de brancas
-        pieces.add(new Pawn(WHITE,0,6));
-        pieces.add(new Pawn(WHITE,1,6));
-        pieces.add(new Pawn(WHITE,2,6));
-        pieces.add(new Pawn(WHITE,3,6));
-        pieces.add(new Pawn(WHITE,4,6));
-        pieces.add(new Pawn(WHITE,5,6));
-        pieces.add(new Pawn(WHITE,6,6));
-        pieces.add(new Pawn(WHITE,7,6));
-        pieces.add(new Rook(WHITE,0,7));
-        pieces.add(new Rook(WHITE,7,7));
-        pieces.add(new Knight(WHITE,1,7));
-        pieces.add(new Knight(WHITE,6,7));
-        pieces.add(new Bishop(WHITE,2,7));
-        pieces.add(new Bishop(WHITE,5,7));
-        pieces.add(new Queen(WHITE,3,7));
+//        pieces.add(new Pawn(WHITE,0,6));
+//        pieces.add(new Pawn(WHITE,1,6));
+//        pieces.add(new Pawn(WHITE,2,6));
+//        pieces.add(new Pawn(WHITE,3,6));
+//        pieces.add(new Pawn(WHITE,4,6));
+//        pieces.add(new Pawn(WHITE,5,6));
+//        pieces.add(new Pawn(WHITE,6,6));
+//        pieces.add(new Pawn(WHITE,7,6));
+//        pieces.add(new Rook(WHITE,0,7));
+//        pieces.add(new Rook(WHITE,7,7));
+//        pieces.add(new Knight(WHITE,1,7));
+//        pieces.add(new Knight(WHITE,6,7));
+//        pieces.add(new Bishop(WHITE,2,7));
+//        pieces.add(new Bishop(WHITE,5,7));
+//        pieces.add(new Queen(WHITE,3,7));
         pieces.add(new King(WHITE,4,7));
         //time de pretas
         pieces.add(new Pawn(BLACK,0,1));
@@ -121,6 +121,11 @@ public class GamePanel extends JPanel implements Runnable {
     }
 
     private void update(){
+        if ((gameOver || stalemate) && mouse.pressed && replayButton != null && replayButton.contains(mouse.x, mouse.y)) {
+            resetGame();
+            repaint();
+            return;
+        }
         if (promotion) {
             promoting();
         } else if(!gameOver && !stalemate) {
@@ -139,6 +144,7 @@ public class GamePanel extends JPanel implements Runnable {
                             activeP = piece;
                         }
                     }
+
                 } else {
                     //SE O JOGADOR ESTA SEGURANDO UMA PEÇA, SIMULA O MOVIMENTO
                     simulate();
@@ -235,20 +241,31 @@ public class GamePanel extends JPanel implements Runnable {
     }
     private void promoting(){
         if(mouse.pressed){
-            for(Piece piece : promoPieces){
-                if(piece.col == mouse.x/Board.SQUARE_SIZE && piece.row == mouse.y / Board.SQUARE_SIZE){
+            int x = (WIDTH - Board.SQUARE_SIZE) / 2;
+            int startY = (HEIGHT - 4 * Board.SQUARE_SIZE) / 2;
+
+            for(int i = 0; i < promoPieces.size(); i++){
+                Piece piece = promoPieces.get(i);
+                int y = startY + i * Board.SQUARE_SIZE;
+
+                // Verifica se o clique do mouse está dentro da imagem da peça
+                if(mouse.x >= x && mouse.x <= x + Board.SQUARE_SIZE &&
+                        mouse.y >= y && mouse.y <= y + Board.SQUARE_SIZE){
+
                     switch(piece.type){
-                        case ROOK:simPieces.add(new Rook(currentColor,activeP.col,activeP.row));break;
-                        case KNIGHT:simPieces.add(new Knight(currentColor,activeP.col,activeP.row));break;
-                        case BISHOP:simPieces.add(new Bishop(currentColor,activeP.col,activeP.row));break;
-                        case QUEEN:simPieces.add(new Queen(currentColor,activeP.col,activeP.row));break;
-                        default:break;
+                        case ROOK: simPieces.add(new Rook(currentColor, activeP.col, activeP.row)); break;
+                        case KNIGHT: simPieces.add(new Knight(currentColor, activeP.col, activeP.row)); break;
+                        case BISHOP: simPieces.add(new Bishop(currentColor, activeP.col, activeP.row)); break;
+                        case QUEEN: simPieces.add(new Queen(currentColor, activeP.col, activeP.row)); break;
+                        default: break;
                     }
+
                     simPieces.remove(activeP.getIndex());
                     copyPieces(simPieces, pieces);
-                    activeP=null;
-                    promotion=false;
+                    activeP = null;
+                    promotion = false;
                     changePlayer();
+                    break; // já encontrou, não precisa testar o resto
                 }
             }
         }
@@ -284,25 +301,99 @@ public class GamePanel extends JPanel implements Runnable {
             activeP.draw(g2);
         }
         if(promotion){
-            for(Piece piece: promoPieces){
-                g2.drawImage(piece.image,piece.getX(piece.col),piece.getY(piece.row),Board.SQUARE_SIZE,Board.SQUARE_SIZE,null);
+            // 1. Fundo escurecido
+            g2.setColor(new Color(0, 0, 0, 150)); // preto com 150 de transparência
+            g2.fillRect(0, 0, WIDTH, HEIGHT);
+
+            // 2. Coordenadas para desenhar no centro
+            int x = (WIDTH - Board.SQUARE_SIZE) / 2;
+            int startY = (HEIGHT - 4 * Board.SQUARE_SIZE) / 2;
+
+            // 3. Título acima
+            g2.setFont(new Font("Consolas", Font.BOLD, 32));
+            g2.setColor(Color.WHITE);
+            g2.drawString("Choose a cat upgrade", WIDTH / 2 - 200, startY - 30);
+
+            // 4. Desenho das peças com moldura
+            for(int i = 0; i < promoPieces.size(); i++){
+                Piece piece = promoPieces.get(i);
+                int y = startY + i * Board.SQUARE_SIZE;
+
+                // Moldura branca
+                g2.setColor(Color.WHITE);
+                g2.setStroke(new BasicStroke(3));
+                g2.drawRect(x, y, Board.SQUARE_SIZE, Board.SQUARE_SIZE);
+
+                // Imagem da peça
+                g2.drawImage(piece.image, x, y, Board.SQUARE_SIZE, Board.SQUARE_SIZE, null);
+
+                // Atualizar col e row para permitir clique
+                piece.col = x / Board.SQUARE_SIZE;
+                piece.row = y / Board.SQUARE_SIZE;
             }
         }
+
+
         if(gameOver){
-            String s = "";
-            if(currentColor == WHITE){
-                s = "White Cats Wins";
-            }else{
-                s = "Black Cats Wins";
+            if(gameOver){
+                g2.setColor(new Color(0, 0, 0, 200));
+                g2.fillRect(0, 0, WIDTH, HEIGHT);
+                String s = (currentColor == WHITE) ? "White Cats WIN!" : "Black Cats WIN!";
+                g2.setFont(new Font("Consolas", Font.BOLD, 50));
+                g2.setColor(Color.WHITE);
+                FontMetrics fm = g2.getFontMetrics();
+                int textWidth = fm.stringWidth(s);
+                g2.drawString(s, (WIDTH - textWidth)/2, HEIGHT/2 - 50);
+
+                int buttonX = WIDTH/2 - 120;
+                int buttonY = HEIGHT/2;
+                int buttonW = 240;
+                int buttonH = 60;
+
+                g2.setColor(Color.LIGHT_GRAY);
+                g2.fillRect(buttonX, buttonY, buttonW, buttonH);
+                g2.setColor(Color.BLACK);
+                g2.setFont(new Font("Consolas", Font.BOLD, 30));
+                g2.drawString("Play Again", buttonX + 20, buttonY + 40);
+
+                replayButton = new Rectangle(buttonX, buttonY, buttonW, buttonH);
             }
-            g2.setFont(new Font("Consola",Font.PLAIN,90));
-            g2.setColor(Color.WHITE);
-            g2.drawString(s,100,210);
+
         }
+
         if(stalemate){
-            g2.setFont(new Font("Consola",Font.PLAIN,90));
+            g2.setColor(new Color(0, 0, 0, 200));
+            g2.fillRect(0, 0, WIDTH, HEIGHT);
+
+            String s = "Empate!";
+            g2.setFont(new Font("Consolas", Font.BOLD, 60));
             g2.setColor(Color.WHITE);
-            g2.drawString("DRAW",100,210);
+            FontMetrics fm = g2.getFontMetrics();
+            int textWidth = fm.stringWidth(s);
+            g2.drawString(s, (WIDTH - textWidth)/2, HEIGHT/2 - 100);
+
+            int buttonW = 260;
+            int buttonH = 60;
+            int buttonX = (WIDTH - buttonW) / 2;
+            int buttonY = HEIGHT/2;
+
+            g2.setColor(Color.LIGHT_GRAY);
+            g2.fillRect(buttonX, buttonY, buttonW, buttonH);
+
+            g2.setColor(Color.DARK_GRAY);
+            g2.setStroke(new BasicStroke(3));
+            g2.drawRect(buttonX, buttonY, buttonW, buttonH);
+
+            g2.setFont(new Font("Consolas", Font.BOLD, 28));
+            g2.setColor(Color.BLACK);
+            String btnText = "Jogar Novamente";
+            FontMetrics btnFm = g2.getFontMetrics();
+            int btnTextWidth = btnFm.stringWidth(btnText);
+            int btnTextX = buttonX + (buttonW - btnTextWidth)/2;
+            int btnTextY = buttonY + (buttonH + btnFm.getAscent())/2 - 4;
+            g2.drawString(btnText, btnTextX, btnTextY);
+
+            replayButton = new Rectangle(buttonX, buttonY, buttonW, buttonH);
         }
     }
     private boolean isIllegal(Piece king){
@@ -548,4 +639,27 @@ public class GamePanel extends JPanel implements Runnable {
         }
         activeP = null;
     }
+    private void resetGame() {
+        GamePanel.pieces.clear();
+        GamePanel.simPieces.clear();
+        promoPieces.clear();
+
+        GamePanel.castlingP = null;
+        checkingP = null;
+        activeP = null;
+
+        currentColor = WHITE;
+        promotion = false;
+        gameOver = false;
+        stalemate = false;
+
+
+        setPieces();
+
+        copyPieces(pieces, simPieces);
+
+        replayButton = null;
+    }
+
+
 }
